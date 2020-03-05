@@ -1,0 +1,130 @@
+library(ggplot2)
+library(dplyr)
+
+
+lines <- data.frame (x = c(10,17,27,37,47,57,67,77,87,97,107,10,17,27,37,47,57,67,77,87,97,107,13,23,33,43,53,63,73,83,93,103,13,23,33,43,53,63,73,83,93,103,10,20,30,40,50,60,70,80,90,100,110),
+                     y = c(10,10,10,10,10,10,10,10,10,10,10,58,58,58,58,58,58,58,58,58,58,58,20,20,20,20,20,20,20,20,20,20,48,48,48,48,48,48,48,48,48,48,0,0,0,0,0,0,0,0,0,0,0),
+                     xend = c(13,23,33,43,53,63,73,83,93,103,110,13,23,33,43,53,63,73,83,93,103,110,17,27,37,47,57,67,77,87,97,107,17,27,37,47,57,67,77,87,97,107,10,20,30,40,50,60,70,80,90,100,110),
+                     yend = c(10,10,10,10,10,10,10,10,10,10,10,58,58,58,58,58,58,58,58,58,58,58,20,20,20,20,20,20,20,20,20,20,48,48,48,48,48,48,48,48,48,48,68,68,68,68,68,68,68,68,68,68,68))
+
+
+lines1 <- data.frame (x = c(20,30,40,50,60,70,80,90,100),
+                      y = c(15,15,15,15,15,15,15,15,15),
+                      pitch = c(10,20,30,40,50,40,30,20,10),
+                      rotate = c(1,1,1,1,1,1,1,1,1))
+
+lines2 <- data.frame (x = c(20,30,40,50,60,70,80,90,100),
+                      y = c(53,53,53,53,53,53,53,53,53),
+                      pitch = c(10,20,30,40,50,40,30,20,10),
+                      rotate = c(2,2,2,2,2,2,2,2,2))
+
+
+#' Title
+#'
+#' @param grass_colour
+#' @param line_colour
+#' @param background_colour
+#' @param goala_colour
+#' @param goalb_colour
+#' @param label_colour
+#' @param BasicFeatures
+#'
+#' @return
+#' @export
+#'
+#' @examples
+create_LEAGUE_Pitch <- function(grass_colour, line_colour, background_colour, goala_colour,goalb_colour,label_colour, BasicFeatures){
+
+  theme_blankPitch = function(size=12) {
+    theme(
+      #axis.line=element_blank(),
+      axis.text.x=element_blank(),
+      axis.text.y=element_blank(),
+      #axis.ticks.y=element_text(size=size),
+      #axis.ticks=element_blank(),
+      axis.ticks.length=unit(0, "lines"),
+      #axis.ticks.margin=unit(0, "lines"),
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank(),
+      legend.key.size=unit(1.2, "lines"),
+      legend.text=element_text(size=size),
+      legend.title=element_text(size=size, face="bold",hjust=0),
+      # panel.border=element_blank(),
+      panel.grid.major=element_blank(),
+      panel.grid.minor=element_blank(),
+      panel.spacing=element_blank(),
+      plot.margin=unit(c(0, 0, 0, 0), "lines"),
+      plot.title=element_text(size=size*1.2),
+      panel.background=element_rect(fill= background_colour,colour= background_colour),
+      strip.text.x=element_text(size=size*1))}
+
+  ymin <- 0 # minimum width
+  ymax <- 68 # maximum width
+  xmin <- 0 # minimum length
+  xmax <- 120 # maximum length
+
+
+  #Goals
+  glxst <- 10
+  glyst <- 31.75
+  glxed <- 110
+  glyed <- 36.25
+
+  #tramlines
+  srwing <- 17
+  rhalfsp <- 34
+  ctre <- 51
+
+  if(BasicFeatures == TRUE){
+    ## initiate the plot, set some boundries to the plot
+    np <- ggplot() + xlim(c(xmin,xmax)) + ylim(c(ymin,ymax)) +
+      # add the theme
+      theme_blankPitch() +
+      # add lines etc
+      geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill = grass_colour, colour = line_colour) +
+      geom_segment(data = lines, aes(x = x, y = y, xend = xend, yend = yend), colour = line_colour,size = 0.5) +
+      geom_segment(aes(x = glxst, y =  glyst, xend = glxst, yend = glyed),colour = goala_colour, size = 1) +
+      geom_segment(aes(x =glxed, y =  glyst, xend =glxed, yend = glyed),colour = goalb_colour, size = 1) +
+      geom_text(data = lines1, aes(x=x, y=y, label = pitch), size = 4, colour = "white") +
+      geom_text(data = lines2, aes(x=x, y=y, label = pitch), size = 4, colour = "white", angle=180)+
+      geom_segment(aes(x = 50, y = ymin, xend = 50, yend = ymax),colour = "red",linetype="solid",size = 0.5) +
+      geom_segment(aes(x = 70, y = ymin, xend = 70, yend = ymax),colour = "red",linetype="solid",size = 0.5) +
+      geom_segment(aes(x = 30, y = ymin, xend = 30, yend = ymax),colour = "blue",linetype="solid",size = 0.5) +
+      geom_segment(aes(x = 90, y = ymin, xend = 90, yend = ymax),colour = "blue",linetype="solid",size = 0.5) +
+      annotate(geom="text", x= 5, y=34, label="www.witnesstheanalysis.com",color = "blue",size = 8, alpha = 0.4, angle=90) +
+      annotate(geom="text", x= 115, y=34, label="www.witnesstheanalysis.com",color = "red",size = 8, alpha = 0.4, angle=270) +
+      annotate(geom="text", x= 60, y=4, label="www.witnesstheanalysis.com",color = label_colour,size = 6, alpha = 0.4) +
+      annotate(geom="text", x= 60, y=66, label="www.witnesstheanalysis.com",color = label_colour,size = 6, alpha = 0.4)
+
+
+  }
+
+  else{
+    ## initiate the plot, set some boundries to the plot
+    np <- ggplot() + xlim(c(xmin,xmax)) + ylim(c(ymin,ymax)) +
+      # add the theme
+      theme_blankPitch() +
+      # add lines etc
+      geom_rect(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill = grass_colour, colour = line_colour) +
+      geom_segment(data = lines, aes(x = x, y = y, xend = xend, yend = yend), colour = line_colour,size = 0.5) +
+      geom_segment(aes(x = glxst, y =  glyst, xend = glxst, yend = glyed),colour = goala_colour, size = 1) +
+      geom_segment(aes(x =glxed, y =  glyst, xend =glxed, yend = glyed),colour = goalb_colour, size = 1) +
+      geom_text(data = lines1, aes(x=x, y=y, label = pitch), size = 4, colour = "white") +
+      geom_text(data = lines2, aes(x=x, y=y, label = pitch), size = 4, colour = "white", angle=180) +
+      geom_segment(aes(x = xmin, y = srwing, xend = xmax, yend = srwing),colour = "blue",linetype="dotted",size = 0.5) +
+      geom_segment(aes(x = xmin, y = rhalfsp, xend = xmax, yend = rhalfsp),colour = "blue",linetype="dotted",size = 0.5) +
+      geom_segment(aes(x = xmin, y = ctre, xend = xmax, yend = ctre),colour = "blue",linetype="dotted",size = 0.5) +
+      geom_segment(aes(x = 30, y = ymin, xend = 30, yend = ymax),colour = "blue",linetype="solid",size = 0.5) +
+      geom_segment(aes(x = 60, y = ymin, xend = 60, yend = ymax),colour = "blue",linetype="solid",size = 0.5) +
+      geom_segment(aes(x = 90, y = ymin, xend = 90, yend = ymax),colour = "blue",linetype="solid",size = 0.5) +
+      annotate(geom="text", x= 5, y=34, label="www.witnesstheanalysis.com",color = label_colour,size = 8, alpha = 0.4, angle=90) +
+      annotate(geom="text", x= 115, y=34, label="www.witnesstheanalysis.com",color = label_colour,size = 8, alpha = 0.4, angle=270) +
+      annotate(geom="text", x= 60, y=4, label="www.witnesstheanalysis.com",color = label_colour,size = 6, alpha = 0.4) +
+      annotate(geom="text", x= 60, y=66, label="www.witnesstheanalysis.com",color = label_colour,size = 6, alpha = 0.4)
+
+  }
+
+  return(np)}
+
+
+create_LEAGUE_Pitch("#A2CD5A", "white", "black", "blue","red","white", BasicFeatures=TRUE)
